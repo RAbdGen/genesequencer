@@ -1,0 +1,9 @@
+{
+    "name": "info3/gene-sequencer",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Dna\\": "src/"
+        }
+    }
+}

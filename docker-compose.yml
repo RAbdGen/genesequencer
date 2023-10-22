@@ -1,0 +1,7 @@
+services:
+  env-php:
+    image: info3/r5a08
+    build: ./
+    container_name: env-php
+    volumes:
+      - ./:/app
