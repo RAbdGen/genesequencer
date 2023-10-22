@@ -5,7 +5,7 @@ RUN apk update \
     && apk add git unzip bash
 
 # Install and configure PHP packages
-RUN apk add php82-cli php82-pecl-xdebug php82-pecl-apcu php82-dom php82-intl  \
+RUN apk add php82-cli php82-pecl-xdebug php82-pecl-apcu php82-dom php82-intl php82-pdo_sqlite \
             php82-tokenizer php82-mbstring php82-opcache php82-xml php82-xmlwriter php82-openssl php82-phar \
     && ln -s /usr/bin/php82 /usr/bin/php
 
