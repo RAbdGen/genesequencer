@@ -7,6 +7,7 @@ use Dna\NotComparableDnaSequenceException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Dna\DnaProviderStub; // Assurez-vous que le bon namespace est utilisé
 
 class GeneSequencerTest extends TestCase {
 
@@ -37,6 +38,60 @@ class GeneSequencerTest extends TestCase {
         $this->expectException(InvalidDnaSequenceException::class);
         $this->expectExceptionMessage("La séquence ADN contient des caractères invalides.");
         new DnaSequence('ATTZ');
+    }
+
+    #[Test]
+    public function should_return_empty_analysis_for_empty_array() {
+        $providerStub = new DnaProviderStub([]);
+        $this->sequencer->setDnaProvider($providerStub); // Assurez-vous que GeneSequencer peut utiliser un DnaProvider
+
+        $result = $this->sequencer->bulkDnaAnalysis();
+        $this->assertEquals("0 analyse(s) effectuée(s).\n", $result);
+    }
+
+    #[Test]
+    public function should_return_analysis_for_single_dna_tuple() {
+        $providerStub = new DnaProviderStub([
+            (object)['dna1' => 'ACGT', 'dna2' => 'AGGT'],
+        ]);
+        $this->sequencer->setDnaProvider($providerStub);
+
+        $result = $this->sequencer->bulkDnaAnalysis();
+        $this->assertEquals("distance = 1 pour ACGT vs AGGT\n1 analyse(s) effectuée(s).\n", $result);
+    }
+
+    #[Test]
+    public function should_return_analysis_for_two_dna_tuples() {
+        $providerStub = new DnaProviderStub([
+            (object)['dna1' => 'ACGT', 'dna2' => 'AGGT'],
+            (object)['dna1' => 'AAGT', 'dna2' => 'ACGT'],
+        ]);
+        $this->sequencer->setDnaProvider($providerStub);
+
+        $result = $this->sequencer->bulkDnaAnalysis();
+        $this->assertEquals("distance = 1 pour ACGT vs AGGT\n" .
+            "distance = 1 pour AAGT vs ACGT\n" .
+            "2 analyse(s) effectuée(s).\n", $result);
+    }
+
+    #[Test]
+    public function should_return_analysis_for_five_dna_tuples() {
+        $providerStub = new DnaProviderStub([
+            (object)['dna1' => 'ACGT', 'dna2' => 'AGGT'],
+            (object)['dna1' => 'AAGT', 'dna2' => 'ACGT'],
+            (object)['dna1' => 'TTAG', 'dna2' => 'GCTA'],
+            (object)['dna1' => 'CCTA', 'dna2' => 'CCTA'],
+            (object)['dna1' => 'GACC', 'dna2' => 'GACA'],
+        ]);
+        $this->sequencer->setDnaProvider($providerStub);
+
+        $result = $this->sequencer->bulkDnaAnalysis();
+        $this->assertEquals("distance = 1 pour ACGT vs AGGT\n" .
+            "distance = 1 pour AAGT vs ACGT\n" .
+            "distance = 4 pour TTAG vs GCTA\n" .
+            "distance = 0 pour CCTA vs CCTA\n" .
+            "distance = 1 pour GACC vs GACA\n" .
+            "5 analyse(s) effectuée(s).\n", $result);
     }
 
     public static function dnaSequencesProvider(): array {

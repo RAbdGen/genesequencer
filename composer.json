@@ -10,6 +10,7 @@
         "phpunit/phpunit": "^11.3"
     },
     "require": {
-        "jfredon/fake-analytics-data": "^1.0"
+        "jfredon/fake-analytics-data": "^1.0",
+      "ext-pdo": "*"
     }
 }

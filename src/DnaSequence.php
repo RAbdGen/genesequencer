@@ -1,7 +1,6 @@
 <?php
 
 namespace Dna;
-use NotComparableDnaSequenceException;
 
 class DnaSequence {
     private string $sequence;

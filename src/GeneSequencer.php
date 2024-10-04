@@ -2,7 +2,10 @@
 
 namespace Dna;
 
-class GeneSequencer
+use AllowDynamicProperties;
+use Jfredon\FakeAnalyticsData\DnaProvider;
+
+#[AllowDynamicProperties] class GeneSequencer
 {
 
     public function __construct()
@@ -25,5 +28,21 @@ class GeneSequencer
         }
 
         return $distance;
+    }
+    public function setDnaProvider(DnaProvider $provider): void {
+        $this->dnaProvider = $provider;
+    }
+
+    public function bulkDnaAnalysis(): string {
+        $dnaTuples = $this->dnaProvider->generate();
+        $result = "";
+        $analysisCount = count($dnaTuples);
+
+        foreach ($dnaTuples as $dnaTuple) {
+            $distance = $this->countDistance(new DnaSequence($dnaTuple->dna1), new DnaSequence($dnaTuple->dna2));
+            $result .= sprintf("distance = %d pour %s vs %s\n", $distance, $dnaTuple->dna1, $dnaTuple->dna2);
+        }
+
+        return $result . sprintf("%d analyse(s) effectuée(s).\n", $analysisCount);
     }
 }
